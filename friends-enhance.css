@@ -1,0 +1,146 @@
+/* =========================================================
+   friends-enhance.css
+   Точечные доработки страницы "Друзья" поверх style.css.
+   Подключается ТОЛЬКО на friends.html.
+   ========================================================= */
+
+/* ---------- Тосты вместо alert() ---------- */
+#fp-toast-stack {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: min(340px, calc(100vw - 32px));
+}
+
+.fp-toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--fp-radius-m, 12px);
+  border: 2px solid rgba(255, 255, 255, .9);
+  background: linear-gradient(180deg, #ffffff 0%, #edeff4 100%);
+  box-shadow: var(--fp-shadow-pop, 0 12px 32px -8px rgba(0, 10, 90, .35));
+  font-size: 14px;
+  color: var(--fp-ink, #15141c);
+  animation: fp-toast-in .3s var(--fp-ease-spring, cubic-bezier(.34,1.56,.64,1));
+}
+
+.fp-toast.fp-toast-success { border-color: var(--fp-success, #44aa44); }
+.fp-toast.fp-toast-error   { border-color: var(--fp-danger, #ff4444); }
+
+.fp-toast.fp-toast-leaving {
+  animation: fp-toast-out .25s ease-in forwards;
+}
+
+@keyframes fp-toast-in {
+  from { opacity: 0; transform: translateY(-10px) scale(.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fp-toast-out {
+  to { opacity: 0; transform: translateX(30px); }
+}
+
+/* ---------- Плавное появление карточек ---------- */
+.fp-card-in {
+  animation: fp-fade-up var(--fp-dur-slow, .5s) var(--fp-ease-out, ease-out) backwards;
+}
+
+/* ---------- Скелетон для списков друзей/заявок ---------- */
+.friends-skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: var(--fp-radius-m, 12px);
+  border: 2px solid var(--fp-border, #bccee2);
+}
+
+.friends-skeleton-avatar,
+.friends-skeleton-lines {
+  border-radius: var(--fp-radius-s, 8px);
+  background: linear-gradient(90deg,
+      rgba(237, 239, 244, .9) 25%,
+      rgba(190, 241, 252, .9) 50%,
+      rgba(237, 239, 244, .9) 75%);
+  background-size: 400px 100%;
+  animation: fp-shimmer 1.4s linear infinite;
+}
+
+.friends-skeleton-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.friends-skeleton-lines {
+  flex: 1;
+  height: 14px;
+  max-width: 220px;
+}
+
+/* ---------- Состояние загрузки на кнопках ---------- */
+.friend-card-btn[disabled] {
+  opacity: .6;
+  cursor: default;
+  filter: saturate(.7);
+}
+
+/* ---------- Кнопка очистки поиска ---------- */
+.search-bar-container {
+  position: relative;
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  color: var(--fp-ink-soft, #4a5568);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: none;
+  padding: 4px;
+}
+
+.search-bar-container.has-value .search-clear-btn {
+  display: block;
+}
+
+.search-bar-container.is-loading::after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  border-radius: 50%;
+  border: 2px solid rgba(20, 69, 143, .25);
+  border-top-color: var(--fp-accent, #14458f);
+  animation: fp-spin .6s linear infinite;
+}
+
+.search-bar-container.is-loading.has-value .search-clear-btn {
+  display: none;
+}
+
+@keyframes fp-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fp-card-in, .fp-toast, .friends-skeleton-avatar, .friends-skeleton-lines {
+    animation: none !important;
+  }
+}

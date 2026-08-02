@@ -49,8 +49,10 @@
         }
     </style>
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/friends-enhance.css">
 </head>
 <body>
+    <div id="fp-toast-stack"></div>
     <div class="feedmain communities-page-container">
         <div style="display: flex; align-items:left; margin-top:-25px">
             <img src="/ui/icons/friends_aero.webp" style="height:75px; width:auto;">
@@ -59,8 +61,9 @@
         <hr style="border: 1px solid #bccee2; margin: 10px 20px; margin-top:0px;">
         
         <!-- Search bar -->
-        <div class="search-bar-container">
+        <div class="search-bar-container" id="search-bar-container">
             <input type="text" id="friend-search-input" placeholder="Поиск пользователей...">
+            <button type="button" class="search-clear-btn" id="search-clear-btn" aria-label="Очистить поиск">✕</button>
         </div>
         
         <!-- Friends list container (visible by default) -->

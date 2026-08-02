@@ -1,0 +1,222 @@
+/* =========================================================
+   chat-enhance.css
+   Точечные доработки переписок (мессенджера) поверх style.css.
+   Подключается ТОЛЬКО на chats.html, ничего не трогает
+   на остальных страницах. Использует существующие
+   design-токены --fp-* и стилистику Frutiger Aero.
+   ========================================================= */
+
+/* ---------- Растущее поле ввода ---------- */
+.message-textarea {
+  max-height: 140px;
+  overflow-y: auto;
+  transition: height var(--fp-dur-fast, .15s) var(--fp-ease-out, ease-out);
+  scrollbar-width: thin;
+  scrollbar-color: var(--fp-aqua, #8fdadb) transparent;
+}
+
+.message-textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.message-textarea::-webkit-scrollbar-thumb {
+  background: var(--fp-aqua, #8fdadb);
+  border-radius: 6px;
+}
+
+/* ---------- Кнопка отправки: стекло + состояние отправки ---------- */
+.send-msg-btn {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #e4fbff 0%, #bef1fc 55%, #8fdadb 100%);
+  transition: transform var(--fp-dur-fast, .15s) var(--fp-ease-out, ease-out),
+              box-shadow var(--fp-dur-fast, .15s) var(--fp-ease-out, ease-out),
+              filter var(--fp-dur-fast, .15s) var(--fp-ease-out, ease-out);
+  box-shadow: 0 2px 6px -2px rgba(0, 40, 80, .35),
+              inset 0 1px 0 rgba(255, 255, 255, .8);
+}
+
+.send-msg-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+  box-shadow: 0 5px 12px -3px rgba(0, 40, 80, .4),
+              inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+
+.send-msg-btn:active:not(:disabled) {
+  transform: translateY(0) scale(.96);
+}
+
+.send-msg-btn:disabled,
+.send-msg-btn.is-sending {
+  cursor: default;
+  color: transparent !important;
+  filter: saturate(.6);
+}
+
+.send-msg-btn.is-sending::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(21, 20, 28, .25);
+  border-top-color: var(--fp-accent, #14458f);
+  animation: fp-spin .6s linear infinite;
+}
+
+@keyframes fp-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- Меню вложений: правильная точка появления ---------- */
+.attach-menu {
+  transform-origin: bottom left;
+  box-shadow: var(--fp-shadow-pop, 0 12px 32px -8px rgba(0, 10, 90, .35));
+}
+
+.attach-option {
+  transition: background-color var(--fp-dur-fast, .15s) ease-out,
+              padding-left var(--fp-dur-fast, .15s) ease-out;
+}
+
+.attach-option:hover {
+  background-color: var(--fp-aqua-bright, #bef1fc);
+  padding-left: 26px;
+}
+
+/* ---------- Кнопка "к новым сообщениям" ---------- */
+.scroll-to-bottom-btn {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, .9);
+  background: linear-gradient(180deg, #ffffff 0%, #bef1fc 100%);
+  box-shadow: 0 0 0 2px rgba(190, 241, 252, .6),
+              0 8px 16px -6px rgba(0, 0, 0, .35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--fp-accent, #14458f);
+  cursor: pointer;
+  z-index: 15;
+  animation: fp-pop-in .22s var(--fp-ease-spring, ease-out) backwards;
+  transition: transform var(--fp-dur-fast, .15s) var(--fp-ease-out, ease-out);
+}
+
+.scroll-to-bottom-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+
+.scroll-to-bottom-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--fp-danger, #ff4444);
+  color: #fff;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  font-weight: 600;
+  animation: fp-badge-pulse .4s var(--fp-ease-spring, ease-out);
+}
+
+.chat-messages-container {
+  position: relative;
+}
+
+/* ---------- Плавная смена панелей на мобильных ---------- */
+@keyframes fp-panel-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fp-panel-in-left {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@media (max-width: 830px) {
+  .chats-page.mobile-chat-open .chat-feedmain {
+    animation: fp-panel-in-right var(--fp-dur-med, .28s) var(--fp-ease-out, ease-out);
+  }
+
+  .chats-sidebar {
+    animation: fp-panel-in-left var(--fp-dur-med, .28s) var(--fp-ease-out, ease-out);
+  }
+
+  .chat-input-area {
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  .scroll-to-bottom-btn {
+    right: 12px;
+    bottom: 12px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* ---------- Уважение к пользователям с reduce motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .send-msg-btn,
+  .scroll-to-bottom-btn,
+  .chats-sidebar,
+  .chat-feedmain,
+  .message-wrapper .message-bubble {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------- Тосты вместо alert() ---------- */
+#fp-toast-stack {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: min(340px, calc(100vw - 32px));
+}
+
+.fp-toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--fp-radius-m, 12px);
+  border: 2px solid rgba(255, 255, 255, .9);
+  background: linear-gradient(180deg, #ffffff 0%, #edeff4 100%);
+  box-shadow: var(--fp-shadow-pop, 0 12px 32px -8px rgba(0, 10, 90, .35));
+  font-size: 14px;
+  color: var(--fp-ink, #15141c);
+  animation: fp-toast-in .3s var(--fp-ease-spring, cubic-bezier(.34,1.56,.64,1));
+}
+
+.fp-toast.fp-toast-success { border-color: var(--fp-success, #44aa44); }
+.fp-toast.fp-toast-error   { border-color: var(--fp-danger, #ff4444); }
+
+.fp-toast.fp-toast-leaving {
+  animation: fp-toast-out .25s ease-in forwards;
+}
+
+@keyframes fp-toast-in {
+  from { opacity: 0; transform: translateY(-10px) scale(.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fp-toast-out {
+  to { opacity: 0; transform: translateX(30px); }
+}

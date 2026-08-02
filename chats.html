@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#c7eaf5">
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/chat-enhance.css">
     <script src="/scripts/cookie-auth.js"></script>
     <script type="module" src="/scripts/crypto-utils.js"></script>
     <script src="/scripts/config.js"></script>
@@ -15,6 +16,7 @@
     <script src="/scripts/friends.js"></script>
 </head>
 <body class="chats-page" style="overflow:hidden">
+<div id="fp-toast-stack"></div>
 
 <div class="chats-page-shell">
 	<div class="feedmain chats-sidebar">
@@ -53,6 +55,10 @@
             <div class="chat-messages-container" id="chat-messages-container" >
                 <!-- messages injected -->
             </div>
+            <button type="button" id="scroll-to-bottom-btn" class="scroll-to-bottom-btn" style="display:none;" aria-label="К новым сообщениям">
+                <span id="scroll-to-bottom-badge" class="scroll-to-bottom-badge" style="display:none;">0</span>
+                ↓
+            </button>
 			
             <!-- edit indicator -->
             <div id="edit-indicator" style="display: none; padding: 5px 20px; background: #fff3cd;" class="edit-mode-indicator">Редактирование сообщения...</div>

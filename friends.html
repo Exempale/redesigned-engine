@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="/fortport.ico">
+    <title>ФортПорт - Друзья</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#c7eaf5">
+    <style>
+        .search-bar-container {
+            margin: 20px;
+            margin-bottom: 10px;
+        }
+        .search-bar-container input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid #bccee2;
+            border-radius: 8px;
+            background: #edeff4;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+        .search-bar-container input:focus {
+            outline: none;
+            border-color: #8FDADB;
+            box-shadow: 0 0 0 2px rgba(143, 218, 219, 0.2);
+        }
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .search-header h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+        .close-search-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.2s;
+        }
+        .close-search-btn:hover {
+            color: #ff4444;
+        }
+    </style>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="feedmain communities-page-container">
+        <div style="display: flex; align-items:left; margin-top:-25px">
+            <img src="/ui/icons/friends_aero.webp" style="height:75px; width:auto;">
+            <h1 style="margin-left: 20px; margin-bottom: 5px; margin-top:15px;">Друзья</h1>
+        </div>
+        <hr style="border: 1px solid #bccee2; margin: 10px 20px; margin-top:0px;">
+        
+        <!-- Search bar -->
+        <div class="search-bar-container">
+            <input type="text" id="friend-search-input" placeholder="Поиск пользователей...">
+        </div>
+        
+        <!-- Friends list container (visible by default) -->
+        <div id="friends-list-container">
+            <div style="margin: 20px;">
+                <h2 style="font-size: 20px; margin-bottom: 15px;">Мои друзья</h2>
+                <div id="friends-list" class="friends-container">
+                    <!-- Сюда будут загружаться друзья -->
+                </div>
+            </div>
+            
+            <!-- Заявки в друзья -->
+            <div style="margin: 20px;">
+                <h2 style="font-size: 20px; margin-bottom: 15px;">
+                    Заявки в друзья
+                    <span id="pending-count" style="background-color: #4CAF50; color: white; padding: 2px 8px; border-radius: 12px; font-size: 14px; margin-left: 10px;">0</span>
+                </h2>
+                <div id="pending-list" class="friends-container">
+                    <!-- Сюда будут загружаться заявки -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Search results container (hidden by default) -->
+        <div id="user-search-container" style="display: none;">
+            <div style="margin: 20px;">
+                <div class="search-header">
+                    <h2>Результаты поиска</h2>
+                    <button class="close-search-btn" onclick="exitSearchMode()">✕</button>
+                </div>
+                <div id="user-search-list" class="friends-container">
+                    <!-- Search results will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/scripts/cookie-auth.js"></script>
+    <script type="module" src="/scripts/crypto-utils.js"></script>
+    <script src="/scripts/config.js"></script>
+    <script src="/scripts/auth.js"></script>
+    <script src="/scripts/client.js"></script>
+    <script src="/scripts/friends.js"></script>
+    <script src="/scripts/chat.js"></script>
+	<script src="/scripts/mascot.js"></script>
+</body>
+</html>

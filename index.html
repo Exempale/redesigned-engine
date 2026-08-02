@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <link rel="icon" type="image/x-icon" href="/fortport.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#c7eaf5">
+    <meta name="theme-color" content="#c7eaf5">
+    <meta name="description" content="ФортПорт — уютная социальная сеть в духе эпохи Frutiger Aero: лента, друзья, сообщества и переписки.">
+    <title>ФортПорт - Лента</title>
+    <link href="/style.css" rel="stylesheet" type="text/css" media="all">
+    <style>
+      /* ===== LOADING SCREEN ===== */
+      #loading-overlay {
+          position: fixed;
+          inset: 0;
+          background: #c7eaf5 url('/bg.webp') center / cover fixed;
+          z-index: 99999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: opacity 0.5s ease;
+      }
+
+      #loading-overlay.hidden {
+          opacity: 0;
+          pointer-events: none;
+      }
+
+      .loading-content {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          animation: loadingPulse 1.5s ease-in-out infinite;
+      }
+
+      @keyframes loadingPulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.05); opacity: 0.7; }
+      }
+
+      .loading-content img,
+      .loading-content video {
+          width: 300px;
+          max-width: 70vw;
+          height: auto;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+          .loading-content { animation: none; }
+      }
+    </style>
+  </head>
+<body>
+  <!-- ===== LOADING SCREEN ===== -->
+  <div id="loading-overlay">
+    <div class="loading-content">
+      <video src="/ui/overlays/loading_face.webm" style="width:300px; max-width:70vw; height:auto;" autoplay muted playsinline loop></video>
+    </div>
+  </div>
+
+  <img class="mainpage-logo" src="/ui/logos/main-page-logo.webp" alt="ФортПорт">
+
+<div class="post postbox" id="new-post-box">
+		 <div class="post-creator-top-row">
+		        <div class="creator-user-info">
+		        	<img src="/default-avatar.jpg" class="creator-avatar frutiger-aero-border" id="feed-avatar" alt="Ваш аватар">
+						<div style="display:flex; flex-direction:column; top:-10px; position:relative;">
+							<span class="creator-username" id="feed-name">Аноним</span>
+						</div>
+	    		</div>
+			<button id="new-post-show" class="new-postbutton" onclick="openPostCreator()">Новый пост...</button>
+    	</div>
+</div>
+
+  <div class="feedmain main-feed">
+    <div class="feed-tabs">
+     <a href="/search"><button class="feed-button" style="display:none;" aria-label="Поиск"><img src="/ui/icons/search.webp" alt=""></button></a>
+	<select id="feed-way" class="feed-select" aria-label="Фильтр ленты">
+	    <option value="all" selected>Лента</option>
+	    <option value="friends">От друзей</option>
+	    <option value="subscriptions">Подписки</option>
+	    <option value="recommended">Новое для вас</option>
+	</select>
+     <button class="feed-button" onclick="openFeedConfig(event)" aria-label="Настройки ленты"><img src="/ui/icons/cog.webp" alt=""></button>
+    </div>
+    	<div id="feed"></div>
+  </div>
+
+  <script src="/scripts/cookie-auth.js"></script>
+  <script type="module" src="/scripts/crypto-utils.js"></script>
+  <script src="/scripts/config.js"></script>
+  <script src="/scripts/auth.js"></script>
+  <script src="/scripts/delete.js"></script>
+  <script src="/scripts/edit.js"></script>
+  <script src="/scripts/post.js"></script>
+  <script src="/scripts/friends.js"></script>
+  <script type="module" src="/scripts/display-post.js"></script>
+  <script type="module" src="/scripts/client.js"></script>
+  <script src="/scripts/mascot.js"></script>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+	const feedAvatar = document.getElementById('feed-avatar');
+	feedAvatar.src = localStorage.getItem('userAvatar') || '/default-avatar.jpg'
+	const feedName = document.getElementById('feed-name');
+	feedName.textContent = localStorage.getItem('username') || 'Аноним'
+	if (!localStorage.getItem('userId')) {
+		const select = document.getElementById('feed-way')
+		select.style.display = 'none';
+		}
+});
+
+// ===== LOADING SCREEN =====
+(function() {
+    const overlay = document.getElementById('loading-overlay');
+    if (!overlay) return;
+    
+    function hideLoading() {
+        overlay.classList.add('hidden');
+        setTimeout(function() {
+            overlay.style.display = 'none';
+        }, 500);
+    }
+    
+    // Hide on DOM ready
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(hideLoading, 300);
+    } else {
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(hideLoading, 300);
+        });
+    }
+    
+    // Fallback: hide on window load
+    window.addEventListener('load', function() {
+        setTimeout(hideLoading, 300);
+    });
+    
+    // Emergency fallback: hide after 5 seconds no matter what
+    setTimeout(hideLoading, 5000);
+})();
+  </script>
+</body>
+</html>

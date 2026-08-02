@@ -1,0 +1,549 @@
+// chat.js - Clean working version
+
+let chatsPanel = null
+let currentChatId = null
+let currentChatWith = null
+let currentChatWithId = null
+let updateInterval = null
+let lastMessageCount = {}
+let chatSelectedFiles = []
+let chatFileTypes = []
+let lastUnreadCount = 0
+let notificationInterval = null
+
+// Helper functions
+function escapeHtml(str) {
+    if (!str) return ''
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+}
+
+if (!sessionStorage.getItem('userId')) {
+    syncFromLocalStorage()
+}
+
+async function getUserById(userId) {
+    const res = await fetch(`/api/users/${userId}`)
+    return res.json()
+}
+
+function createChatsPanel() {
+    if (document.getElementById('chats-panel')) {
+        chatsPanel = document.getElementById('chats-panel')
+        return
+    }
+    chatsPanel = document.createElement('div')
+    chatsPanel.id = 'chats-panel'
+    chatsPanel.classList.add('chats-panel')
+    document.body.appendChild(chatsPanel)
+}
+
+function toggleChatsPanel() {
+    createChatsPanel()
+    if (chatsPanel.classList.contains('open')) {
+        chatsPanel.classList.remove('open')
+        if (updateInterval) clearInterval(updateInterval)
+    } else {
+        chatsPanel.classList.add('open')
+        showChatsList()
+    }
+}
+
+function updateFilePreview(chatId) {
+    const previewArea = document.getElementById(`chat-preview-${chatId}`)
+    if (!previewArea) return
+    
+    previewArea.innerHTML = ''
+    if (chatSelectedFiles.length === 0) {
+        previewArea.style.display = 'none'
+        return
+    }
+    
+    previewArea.style.display = 'flex'
+    
+    chatSelectedFiles.forEach((file, idx) => {
+        const type = file.type.split('/')[0]
+        const previewItem = document.createElement('div')
+        previewItem.classList.add('chat-preview-item')
+        
+        if (type === 'image') {
+            const img = document.createElement('img')
+            img.src = URL.createObjectURL(file)
+	    img.classList.add('chat-preview-image')
+            previewItem.appendChild(img)
+        } else if (type === 'video') {
+            const video = document.createElement('video')
+            video.src = URL.createObjectURL(file)
+            video.controls = true
+            previewItem.appendChild(video)
+        } else if (type === 'audio') {
+            const placeholder = document.createElement('div')
+            placeholder.textContent = file.name.length > 20 ? file.name.substring(0,17)+'...' : file.name
+            previewItem.appendChild(placeholder)
+        }
+        
+        const removeBtn = document.createElement('button')
+        removeBtn.textContent = '×'
+        removeBtn.onclick = () => {
+            chatSelectedFiles.splice(idx, 1)
+            chatFileTypes.splice(idx, 1)
+            updateFilePreview(chatId)
+        }
+        previewItem.appendChild(removeBtn)
+        previewArea.appendChild(previewItem)
+    })
+}
+
+async function showChatsList() {
+    const userId = sessionStorage.getItem('userId')
+    if (!userId) return
+    try {
+        const response = await fetch(`/api/user_chats/${userId}`)
+        const chats = await response.json()
+        chats.sort((a,b) => new Date(b.lastMessageTime||0) - new Date(a.lastMessageTime||0))
+
+        const usersRes = await fetch('/api/users')
+        const users = await usersRes.json()
+        const userMap = {}
+        users.forEach(u => { userMap[u.id] = u.profilePicture })
+	const { decryptMessage, isEncrypted } = await import('./crypto-utils.js')
+        let totalUnread = 0
+        let html = `<div class="chats-friends-view"><div class="chats-header"><h3>Переписки</h3></div><div class="chats-list">`
+        if (chats.length === 0) {
+            html += '<div class="no-chats-message">У вас пока нет переписок!</div>'
+        } else {
+            for (const chat of chats) {
+                const avatar = userMap[chat.withUserId] || '/default-avatar.jpg'
+                const time = chat.lastMessageTime ? new Date(chat.lastMessageTime).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : ''
+                totalUnread += chat.unreadCount || 0
+                let currentChatUnread = ''
+                if (chat.unreadCount!==0) {currentChatUnread=chat.unreadCount}
+		const currentPreview = await decryptMessage(chat.chatId, chat.lastMessage)
+		html += `
+                    <div class="chat-item" onclick="openChat('${chat.chatId}', '${chat.withUser}', ${chat.withUserId})">
+                        <img src="${avatar}" class="chat-item-avatar frutiger-aero-border">
+                        <div class="chat-item-info">
+                            <div class="chat-item-name">${chat.withUser} <p class="chat-item-notification">${currentChatUnread}</p></div>
+                            
+                            <div class="chat-item-preview">${currentPreview}</div>
+                        </div>
+                        <div class="chat-item-time">${time}</div>
+                    </div>
+                `
+            }
+        }
+        html += '</div></div>'
+        chatsPanel.innerHTML = html
+        updateChatNotifications(totalUnread)
+        lastUnreadCount = totalUnread
+    } catch (err) {
+        console.error('Error loading chats:', err)
+    }
+}
+
+async function markChatAsRead(chatId, userId) {
+    try {
+        await fetch(`/api/chat_messages/${chatId}/read`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: userId })
+        });
+        await updateNotificationCount();
+    } catch (err) {
+        console.error('Error marking chat as read:', err);
+    }
+}
+
+async function sendMessage(chatId, withUser) {
+    const input = document.getElementById(`message-input-${chatId}`)
+    const message = input ? input.value.trim() : ''
+    const currentUserId = sessionStorage.getItem('userId')
+    if (!message && chatSelectedFiles.length === 0) return
+
+    const filesToSend = [...chatSelectedFiles]
+
+    if (input) input.value = ''
+    chatSelectedFiles = []
+    chatFileTypes = []
+    updateFilePreview(chatId)
+
+    const { encryptMessage } = await import('./crypto-utils.js')
+    
+    let encryptedMessage = ''
+    if (message) {
+        encryptedMessage = await encryptMessage(chatId, message)
+    }
+
+    const formData = new FormData()
+    formData.append('message', encryptedMessage)
+    formData.append('fromUserId', currentUserId)
+    formData.append('toUserId', currentChatWithId)
+    
+    filesToSend.forEach(file => {
+        formData.append('files', file)
+    })
+
+    try {
+        await fetch(`/api/chat_messages/${chatId}`, {
+            method: 'POST',
+            body: formData
+        })
+        
+        // Reload messages to show the new one
+        await loadMessages(chatId, withUser, parseInt(currentUserId))
+        
+    } catch (err) {
+        console.error('Error sending message:', err)
+        alert('Failed to send message')
+    }
+}
+
+async function loadMessages(chatId, withUser, currentUserId, isUpdate = false) {
+    try {
+        const response = await fetch(`/api/chat_messages/${chatId}`)
+        const messages = await response.json()
+        const container = document.getElementById(`messages-container-${chatId}`)
+        if (!container) return
+
+        const currentCount = messages.length
+        const prevCount = lastMessageCount[chatId] || 0
+        
+        if (isUpdate && currentCount <= prevCount) return
+
+        const { decryptMessage, isEncrypted } = await import('./crypto-utils.js')
+        
+        let html = ''
+        for (const msg of messages) {
+            let timestamp, senderId, content
+            
+            if (typeof msg === 'string') {
+                const underscoreIndex = msg.indexOf('_')
+                timestamp = msg.substring(0, underscoreIndex)
+                const rest = msg.substring(underscoreIndex + 1)
+                const colonIndex = rest.indexOf(':')
+                senderId = parseInt(rest.substring(0, colonIndex))
+                content = rest.substring(colonIndex + 1)
+            } else {
+                continue
+            }
+            
+            const isMine = senderId === currentUserId
+            const time = new Date(timestamp).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
+            
+            let filesHtml = ''
+            let textContent = content
+            const filesMarker = '|files:'
+            const filesIndex = content.indexOf(filesMarker)
+            
+            if (filesIndex !== -1) {
+                const encryptedPart = content.substring(0, filesIndex)
+                const filesList = content.substring(filesIndex + filesMarker.length).split(',')
+                
+                if (encryptedPart && isEncrypted(encryptedPart)) {
+                    textContent = await decryptMessage(chatId, encryptedPart)
+                } else {
+                    textContent = encryptedPart
+                }
+                
+                for (const filePath of filesList) {
+                    if (filePath.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+                        filesHtml += `<img src="${filePath}" class="chat-attachment-image" onclick="window.openLightbox('${filePath}')">`
+                    } else if (filePath.match(/\.(mp4|webm|mov)$/i)) {
+                        filesHtml += `<video src="${filePath}" controls class="chat-attachment-video"></video>`
+                    } else if (filePath.match(/\.(mp3|wav|ogg)$/i)) {
+                        filesHtml += `<audio src="${filePath}" controls class="chat-attachment-audio"></audio>`
+                    }
+                }
+            } else {
+                if (isEncrypted(content)) {
+                    textContent = await decryptMessage(chatId, content)
+                }
+            }
+            
+            html += `
+                <div class="message ${isMine ? 'message-mine' : 'message-theirs'}">
+                    ${textContent ? `<div class="message-text">${escapeHtml(textContent)}</div>` : ''}
+                    ${filesHtml}
+                    <div class="message-time">${time}</div>
+                </div>
+            `
+        }
+        if (messages.length === 0) html = '<div class="no-messages">Нет сообщений. Напишите что-нибудь!</div>'
+        container.innerHTML = html
+        container.scrollTop = container.scrollHeight
+        lastMessageCount[chatId] = currentCount
+        
+        // Only update notifications, don't play sound on load
+        await updateNotificationCount(false)
+        
+    } catch (err) {
+        console.error('Error loading messages:', err)
+    }
+}
+
+async function openChat(chatId, withUser, withUserId) {
+    currentChatId = chatId
+    currentChatWith = withUser
+    currentChatWithId = withUserId
+    const currentUserId = parseInt(sessionStorage.getItem('userId'))
+    const panel = document.getElementById('chats-panel')
+    
+    let avatar = '/default-avatar.jpg'
+    if (withUserId) {
+        const userData = await getUserById(withUserId)
+        avatar = userData.profilePicture || '/default-avatar.jpg'
+    }
+
+    panel.innerHTML = `
+        <div class="chat-view">
+            <div class="chat-header">
+                <button class="back-to-chats" style="margin-right:-10px; font-size:24px;" onclick="backToChatsList()"><</button>
+                <div class="chat-with-info">
+                    <img src="${avatar}" class="chat-with-avatar frutiger-aero-border">
+                    <span class="chat-with-name"><a class="chat-with-name" href="/profile.html?id=${withUserId}">${withUser}</a></span>
+                </div>
+            </div>
+            <div class="messages-container" id="messages-container-${chatId}">
+                <div style="text-align: center; padding: 20px;">Загрузка сообщений...</div>
+            </div>
+            <div class="chat-preview-area" id="chat-preview-${chatId}" style="display: none; padding: 10px; background: #f5f5f5; border-top: 1px solid #ccc; flex-wrap: wrap; gap: 8px;"></div>
+            <div class="message-input-area">
+                <textarea id="message-input-${chatId}" placeholder="Написать сообщение..." rows="2"></textarea>
+                <div class="message-buttons" style="display:grid; min-width:90px; gap:10px;">
+                    <input type="file" id="chat-file-${chatId}" multiple style="display: none;" accept="image/*,video/*,audio/*">
+                    <button class="attach-file-btn" style="min-width:90px;" onclick="document.getElementById('chat-file-${chatId}').click()">Прикрепить</button>
+                    <button style="min-width:90px;" onclick="sendMessage('${chatId}', '${withUser}')">Отправить!</button>
+                </div>
+            </div>
+        </div>
+    `
+
+    chatSelectedFiles = []
+    chatFileTypes = []
+    updateFilePreview(chatId)
+
+    document.getElementById(`chat-file-${chatId}`).onchange = (e) => {
+        const files = Array.from(e.target.files)
+        files.forEach(file => {
+            const type = file.type.split('/')[0]
+            chatSelectedFiles.push(file)
+            chatFileTypes.push(type)
+        })
+        updateFilePreview(chatId)
+        e.target.value = ''
+    }
+
+    await markChatAsRead(chatId, currentUserId)
+    await loadMessages(chatId, withUser, currentUserId)
+
+    setTimeout(() => {
+        const inp = document.getElementById(`message-input-${chatId}`)
+        if (inp) {
+            inp.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    sendMessage(chatId, withUser)
+                }
+            })
+        }
+    }, 100)
+
+    if (updateInterval) clearInterval(updateInterval)
+    updateInterval = setInterval(async () => {
+        if (currentChatId === chatId) {
+            await updateChatMessages(chatId, withUser, currentUserId)
+        }
+    }, 3000)
+}
+
+async function updateChatMessages(chatId, withUser, currentUserId) {
+    try {
+        const response = await fetch(`/api/chat_messages/${chatId}`)
+        const allMessages = await response.json()
+        const container = document.getElementById(`messages-container-${chatId}`)
+        if (!container) return
+        
+        const currentCount = allMessages.length
+        const previousCount = lastMessageCount[chatId] || 0
+        
+        if (currentCount <= previousCount) return
+        
+        // New messages arrived
+        const newMessages = allMessages.slice(previousCount)
+        const { decryptMessage, isEncrypted } = await import('./crypto-utils.js')
+        
+        let newMessagesHtml = ''
+        let hasNewFromOthers = false
+        
+        for (const msg of newMessages) {
+            const underscoreIndex = msg.indexOf('_')
+            const timestamp = msg.substring(0, underscoreIndex)
+            const rest = msg.substring(underscoreIndex + 1)
+            const colonIndex = rest.indexOf(':')
+            const senderId = parseInt(rest.substring(0, colonIndex))
+            const content = rest.substring(colonIndex + 1)
+            
+            const isMine = senderId === currentUserId
+            if (!isMine) hasNewFromOthers = true
+            
+            const time = new Date(timestamp).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
+            
+            let filesHtml = ''
+            let textContent = content
+            const filesMarker = '|files:'
+            const filesIndex = content.indexOf(filesMarker)
+            
+            if (filesIndex !== -1) {
+                const encryptedPart = content.substring(0, filesIndex)
+                const filesList = content.substring(filesIndex + filesMarker.length).split(',')
+                
+                if (encryptedPart && isEncrypted(encryptedPart)) {
+                    textContent = await decryptMessage(chatId, encryptedPart)
+                } else {
+                    textContent = encryptedPart
+                }
+                
+                for (const filePath of filesList) {
+                    if (filePath.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+                        filesHtml += `<img src="${filePath}" class="chat-attachment-image" onclick="window.openLightbox('${filePath}')">`
+                    } else if (filePath.match(/\.(mp4|webm|mov)$/i)) {
+                        filesHtml += `<video src="${filePath}" controls class="chat-attachment-video"></video>`
+                    } else if (filePath.match(/\.(mp3|wav|ogg)$/i)) {
+                        filesHtml += `<audio src="${filePath}" controls class="chat-attachment-audio"></audio>`
+                    }
+                }
+            } else {
+                if (isEncrypted(content)) {
+                    textContent = await decryptMessage(chatId, content)
+                }
+            }
+            
+            newMessagesHtml += `
+                <div class="message ${isMine ? 'message-mine' : 'message-theirs'}">
+                    ${textContent ? `<div class="message-text">${escapeHtml(textContent)}</div>` : ''}
+                    ${filesHtml}
+                    <div class="message-time">${time}</div>
+                </div>
+            `
+        }
+        
+        if (newMessagesHtml) {
+            container.insertAdjacentHTML('beforeend', newMessagesHtml)
+            container.scrollTop = container.scrollHeight
+            lastMessageCount[chatId] = currentCount
+            
+            // Play sound for new messages from others
+            if (hasNewFromOthers) {
+                playNotificationSound()
+            }
+            
+            // Mark as read if this is the active chat
+            if (currentChatId === chatId && hasNewFromOthers) {
+                await markChatAsRead(chatId, currentUserId)
+            }
+        }
+        
+        await updateNotificationCount(hasNewFromOthers)
+        
+    } catch (err) {
+        console.error('Error updating messages:', err)
+    }
+}
+
+function playNotificationSound() {
+    try {
+        const audio = new Audio('/sounds/chat-new-message.ogg')
+        audio.volume = 0.5
+        audio.play().catch(e => console.log('Audio play failed:', e))
+    } catch (e) {
+        console.log('Audio error:', e)
+    }
+}
+
+async function updateNotificationCount(playSound = true) {
+    const userId = sessionStorage.getItem('userId')
+    if (!userId) return
+    try {
+        const res = await fetch(`/api/user_chats/${userId}`)
+        const chats = await res.json()
+        const totalUnread = chats.reduce((sum, chat) => sum + (chat.unreadCount || 0), 0)
+        
+        if (playSound && totalUnread > lastUnreadCount) {
+            playNotificationSound()
+        }
+        
+        lastUnreadCount = totalUnread
+        updateChatNotifications(totalUnread)
+        
+    } catch(e) { console.error(e) }
+}
+
+function updateChatNotifications(count) {
+    const btn = document.getElementById('chats-toggle')
+    if (!btn) return
+    const existing = btn.querySelector('.notification-badge')
+    if (existing) existing.remove()
+    if (count > 0) {
+        const badge = document.createElement('span')
+        badge.classList.add('notification-badge')
+        badge.textContent = count > 99 ? '99+' : count
+        btn.appendChild(badge)
+    }
+}
+
+function startNotificationUpdater() {
+    if (notificationInterval) clearInterval(notificationInterval);
+    notificationInterval = setInterval(() => {
+        if (sessionStorage.getItem('userId')) {
+            updateNotificationCount(false);
+		if (!currentChatId) {showChatsList();}
+        }
+    }, 5000);
+}
+
+function backToChatsList() {
+    if (updateInterval) clearInterval(updateInterval)
+    showChatsList()
+}
+
+async function openChatWithUser(userId, username = null) {
+    const currentUserId = sessionStorage.getItem('userId')
+    if (!currentUserId) return
+    
+    let displayName = username
+    if (!displayName) {
+        const userRes = await fetch(`/api/users/${userId}`)
+        const userData = await userRes.json()
+        displayName = userData.username
+    }
+    
+    const participants = [parseInt(currentUserId), parseInt(userId)].sort((a,b)=>a-b)
+    const chatId = participants.join('_')
+    
+    createChatsPanel()
+    chatsPanel.classList.add('open')
+    await openChat(chatId, displayName, parseInt(userId))
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    if (sessionStorage.getItem('userId')) {
+        startNotificationUpdater()
+    }
+})
+
+// Clean up on page unload
+window.addEventListener('beforeunload', () => {
+    if (notificationInterval) clearInterval(notificationInterval)
+    if (updateInterval) clearInterval(updateInterval)
+})
+
+window.toggleChatsPanel = toggleChatsPanel
+window.openChat = openChat
+window.sendMessage = sendMessage
+window.backToChatsList = backToChatsList
+window.openChatWithUser = openChatWithUser

@@ -1,0 +1,368 @@
+[
+  {
+    "id": 1773499483205,
+    "username": "Марк Карада",
+    "password": "$2b$10$cLAzo9tIIpB4vdcGKAPyjeM8jQBF.OWOpsaSgt8ezYe.jEwLwpFui",
+    "createdAt": "2026-03-14T14:44:43.205Z",
+    "isAdmin": true,
+    "profilePicture": "/images/1773525700268-439475710.webp",
+    "communities": [
+      1773926513828,
+      1773954277749,
+      1773990950903
+    ],
+    "friends": [
+      1773537475037,
+      1773532455226,
+      1773528171933,
+      1773556894813,
+      1773577931650,
+      1773530527641,
+      1773575324676,
+      1773598285567,
+      1773636840789,
+      1773729318073,
+      1773810545846,
+      1773857878409
+    ],
+    "pending": [],
+    "subscribers": []
+  },
+  {
+    "id": 1773528171933,
+    "username": "MrDiscomfort",
+    "password": "$2b$10$cfJR10Vf/xlz1jX0CTYquu0C.5/Xt37KBbRSNd8D7/R3UABPEoRrq",
+    "createdAt": "2026-03-14T22:42:51.933Z",
+    "isAdmin": false,
+    "profilePicture": "/images/1773528318061-109821150.webp",
+    "pending": [],
+    "friends": [
+      1773499483205
+    ],
+    "subscribers": []
+  },
+  {
+    "id": 1773530527641,
+    "username": "Некий",
+    "password": "$2b$10$GPrPq3Uoj7kGTT8/50YcoeGVJnB2X0qoHAvuAmEgxfHFSUvL.V8F6",
+    "createdAt": "2026-03-14T23:22:07.641Z",
+    "isAdmin": false,
+    "profilePicture": "/images/1773531259660-977286700.webp",
+    "friends": [
+      1773499483205
+    ],
+    "pending": [
+      1773556894813
+    ]
+  },
+  {
+    "id": 1773532455226,
+    "username": "ВеСтНИк=)",
+    "password": "$2b$10$EywQCtHxDz0vIn9wGVabPub2ZnzRn/StD5zcdx/CmlL2bzEymyL4i",
+    "createdAt": "2026-03-14T23:54:15.226Z",
+    "isAdmin": false,
+    "profilePicture": "/images/west.gif",
+    "friends": [
+      1773537475037,
+      1773499483205,
+      1773556894813
+    ],
+    "pending": [],
+    "subscribers": [],
+    "communities": [
+      1773954277749,
+      1773926513828
+    ]
+  },
+  {
+    "id": 1773537475037,
+    "username": "СуперКорн",
+    "password": "$2b$10$N4Cn2trLQ9OmwwM/nEVKrurqfRBKBCFedB40d/LTvqH2aQqXxjefu",
+    "createdAt": "2026-03-15T01:17:55.037Z",
+    "isAdmin": false,
+    "profilePicture": "/images/1773841404320-380566368.webp",
+    "friends": [
+      1773532455226,
+      1773499483205
+    ],
+    "pending": [],
+    "subscribers": []
+  },
+  {
+    "id": 1773556894813,
+    "username": "КотАбормот69",
+    "password": "$2b$10$p.BPZANpy1.1TFYZa3e7gO7UJc9YI.kPoVGWOdcPMasAtqmaolLSe",
+    "createdAt": "2026-03-15T06:41:34.813Z",
+    "isAdmin": false,
+    "profilePicture": "/images/1773557008117-440734525.webp",
+    "friends": [
+      1773499483205,
+      1773597196796,
+      1773810545846,
+      1773857878409,
+      1773532455226
+    ],
+    "pending": [],
+    "subscribers": [
+      1773532455226
+    ],
+    "publicKey": null,
+    "communities": [
+      1773926513828,
+      1773954277749
+    ]
+  },
+  {
+    "id": 1773575324676,
+    "username": "Ржавый",
+    "password": "$2b$10$y4RfygxveyYE0huSwccpTO0zeK1vocy9htY6wjL5eHNDA2wqeLj66",
+    "createdAt": "2026-03-15T11:48:44.676Z",
+    "isAdmin": false,
+    "profilePicture": null,
+    "friends": [
+      1773499483205
+    ],
+    "pending": [],
+    "subscribers": [],
+    "publicKey": null
+  },
+  {
+    "id": 1773577931650,
+    "username": "Kotleta",
+    "password": "$2b$10$EF5OTDtF0OklMbpI0EobJ.yHheuEgV4LF0akY2XuDnaNnSI96Jb2W",
+    "createdAt": "2026-03-15T12:32:11.650Z",
+    "isAdmin": false,
+    "profilePicture": "/images/kotleta.jpg",
+    "friends": [
+      1773499483205
+    ],
+    "pending": [],
+    "subscribers": [],
+    "publicKey": null
+  },
+  {
+    "id": 1773589485578,
+    "username": "шино",
+    "password": "$2b$10$lHKOqXuC.zHZsw//kLRhq.y4T8WNo/m/N7E5cXXK8BuGz0ZK7.HFu",
+    "createdAt": "2026-03-15T15:44:45.578Z",
+    "isAdmin": false,
+    "profilePicture": "/images/1773589550399-508317182.webp",
+    "friends": [],
+    "pending": [],
+    "subscribers": [],
+    "publicKey": null
+  },
+  {
+    "id": 1773597196796,
+    "username": "йиишница",
+    "password": "$2b$10$j/20oEXI2Yp6QVM/yonDbe.BFfQNerMvWo2GWAi6u6Sin0XvqliDK",
+    "createdAt": "2026-03-15T17:53:16.796Z",
+    "isAdmin": false,
+    "profilePicture": "/images/1773597635658-863803407.webp",
+    "friends": [
+      1773556894813
+    ],
+    "pending": [
+      1773499483205
+    ],
+    "subscribers": [],
+    "publicKey": null
+  },
+  {
+    "id": 1773598285567,
+    "username": "СуперКраш",
+    "password": "$2b$10$1O6SwRE6pCbOqyoHPVp/Au9wUz.m/2F.kqZz98IdOOHsEBq6aNXcO",
+    "createdAt": "2026-03-15T18:11:25.567Z",
+    "isAdmin": false,
+    "profilePicture": "/images/1773598511288-716488332.webp",
+    "friends": [
+      1773499483205
+    ],
+    "pending": [
+      1773556894813
+    ],
+    "subscribers": [],
+    "publicKey": null
+  },
+  {
+    "id": 1773636840789,
+    "username": "DubaiNews",
+    "password": "$2b$10$HbGP7BjzNLKY91cecAsZxO1TBHRjBRyauWHRaFfFdn41SxgSLK0LC",
+    "createdAt": "2026-03-16T04:54:00.789Z",
+    "isAdmin": false,
+    "profilePicture": "/images/1773636900541-391453235.webp",
+    "friends": [
+      1773499483205
+    ],
+    "pending": [],
+    "subscribers": [],
+    "publicKey": null
+  },
+  {
+    "id": 1773669849179,
+    "username": "Похоронное бюро",
+    "password": "$2b$10$Q2Ulg3mQ8h6uECvmFppVWOpnZ/0M8/Q3Y9lv5WsnNDu6Dxz7WN0TW",
+    "createdAt": "2026-03-16T14:04:09.179Z",
+    "isAdmin": false,
+    "profilePicture": null,
+    "friends": [],
+    "pending": [],
+    "subscribers": [],
+    "publicKey": null
+  },
+  {
+    "id": 1773716374108,
+    "username": "StroyITell",
+    "password": "$2b$10$1.UbXnS3zZNpyulQikmSwuIxgQ3Fj1UcgBUoe0TUCfYoIMyieFOB2",
+    "createdAt": "2026-03-17T02:59:34.108Z",
+    "isAdmin": false,
+    "profilePicture": null,
+    "communities": [],
+    "friends": [],
+    "pending": [],
+    "subscribers": [],
+    "status": ""
+  },
+  {
+    "id": 1773729318073,
+    "username": "Icarian",
+    "password": "$2b$10$yh.dOkRN//lr4OvuvcFIuuTqqcZMTFy0XTM2kGdQF7Lx6hGurwx/.",
+    "createdAt": "2026-03-17T06:35:18.073Z",
+    "isAdmin": false,
+    "profilePicture": null,
+    "communities": [],
+    "friends": [
+      1773499483205
+    ],
+    "pending": [
+      1773556894813
+    ],
+    "subscribers": [],
+    "status": ""
+  },
+  {
+    "id": 1773734381538,
+    "username": "karazaich",
+    "password": "$2b$10$Q9M5fCRYZJ.3SHU3O9S6lOFqMPh8K2HoL.johhrOO.UtD/W65L.M2",
+    "createdAt": "2026-03-17T07:59:41.538Z",
+    "isAdmin": false,
+    "profilePicture": null,
+    "communities": [],
+    "friends": [],
+    "pending": [],
+    "subscribers": [],
+    "status": ""
+  },
+  {
+    "id": 1773738759190,
+    "username": "FLoppyDiSK",
+    "password": "$2b$10$UBCAvQnVdV6Ep4VnsqDMRuN623Ug90NSWpvjmbJ9Ja74XeRXW9dNS",
+    "createdAt": "2026-03-17T09:12:39.190Z",
+    "isAdmin": false,
+    "profilePicture": null,
+    "communities": [],
+    "friends": [],
+    "pending": [],
+    "subscribers": [],
+    "status": ""
+  },
+  {
+    "id": 1773739646822,
+    "username": "никодоз",
+    "password": "$2b$10$YhHm/tPGddIK5YfcHacCY.LlZ5GUOuEFiDqaFmKx3mAyRIedGQY6m",
+    "createdAt": "2026-03-17T09:27:26.822Z",
+    "isAdmin": false,
+    "profilePicture": null,
+    "communities": [],
+    "friends": [],
+    "pending": [],
+    "subscribers": [],
+    "status": ""
+  },
+  {
+    "id": 1773806244460,
+    "username": "ПринцШугар_",
+    "password": "$2b$10$keeTRFOzeUFWvvC.Pe8JAeZDW5cu1bRsYK8jR3RIZT4K1LH/br0Lu",
+    "createdAt": "2026-03-18T03:57:24.460Z",
+    "isAdmin": false,
+    "profilePicture": null,
+    "communities": [],
+    "friends": [],
+    "pending": [],
+    "subscribers": [],
+    "status": ""
+  },
+  {
+    "id": 1773807507833,
+    "username": "Троицкий 33",
+    "password": "$2b$10$zG9qDG2IgbYiDH/OGMk5Sewsre8Nomp7Ts0eAFC.pcQDZSBZHP5r6",
+    "createdAt": "2026-03-18T04:18:27.833Z",
+    "isAdmin": false,
+    "profilePicture": null,
+    "communities": [],
+    "friends": [],
+    "pending": [],
+    "subscribers": [],
+    "status": ""
+  },
+  {
+    "id": 1773810433653,
+    "username": "mail4polinka@gmail.com",
+    "password": "$2b$10$Cp9KwxAOhF5HdU2xavXAyO2lMPh78w9fmuXF6A1pDQMA1Mhfxm0sK",
+    "createdAt": "2026-03-18T05:07:13.653Z",
+    "isAdmin": false,
+    "profilePicture": null,
+    "communities": [],
+    "friends": [],
+    "pending": [],
+    "subscribers": [],
+    "status": ""
+  },
+  {
+    "id": 1773810545846,
+    "username": "Goldfish",
+    "password": "$2b$10$kjZTcIr3RwP9PtYaubLCaetSgXNgj.Vd2QLBawjwqvxs9GshAijUW",
+    "createdAt": "2026-03-18T05:09:05.846Z",
+    "isAdmin": false,
+    "profilePicture": "/images/1773902389823-877571896.webp",
+    "communities": [
+      1773926513828
+    ],
+    "friends": [
+      1773556894813,
+      1773499483205
+    ],
+    "pending": [],
+    "subscribers": [],
+    "status": ""
+  },
+  {
+    "id": 1773857878409,
+    "username": "МанипулятарТархунав67",
+    "password": "$2b$10$PsTWJQcLC0XCgWZ5EZWWn.t.s/8kkiZ8cunOOAn7PYLqF8/215.NG",
+    "createdAt": "2026-03-18T18:17:58.409Z",
+    "isAdmin": false,
+    "profilePicture": "/images/1773858061140-601511261.webp",
+    "communities": [],
+    "friends": [
+      1773499483205,
+      1773556894813
+    ],
+    "pending": [],
+    "subscribers": [],
+    "status": ""
+  },
+  {
+    "id": 1774004951785,
+    "username": "Джинса",
+    "password": "$2b$10$xczp6AS.GR7R9GhxLzXBh.FOGUYB4KJ8eR1/iHsA/1Je7c6H8E95e",
+    "createdAt": "2026-03-20T11:09:11.785Z",
+    "isAdmin": false,
+    "profilePicture": null,
+    "communities": [],
+    "friends": [],
+    "pending": [],
+    "subscribers": [],
+    "status": ""
+  }
+]

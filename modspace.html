@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="icon" type="image/x-icon" href="/fortport.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#c7eaf5">
+    <title>ФортПорт - Модерация</title>
+    <link href="style.css" rel="stylesheet" type="text/css" media="all">
+    <style>
+        body {
+            background-image: url('/mod_bg.webp');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding-top: 80px;
+        }
+
+        .mod-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .mod-header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px 30px;
+            margin-bottom: 25px;
+            border: 4px solid #cccfe0;
+            border-style: outset;
+            box-shadow: 5px 10px 20px rgba(0, 10, 90, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .mod-header h1 {
+            margin: 0;
+            color: #1a1a2e;
+            font-size: 24px;
+        }
+
+        .mod-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .mod-stat {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            border: 2px solid #8FDADB;
+        }
+
+        .mod-stat strong {
+            color: #1a1a2e;
+        }
+
+        .flag-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px 25px;
+            margin-bottom: 16px;
+            border: 4px solid #cccfe0;
+            border-style: outset;
+            box-shadow: 5px 10px 10px -5px rgba(0, 10, 90, 0.2);
+            transition: all 0.2s;
+        }
+
+        .flag-card:hover {
+            border-color: #8FDADB;
+        }
+
+        .flag-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .flag-card-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .flag-card-post {
+            font-size: 16px;
+            color: #1a1a2e;
+            margin: 0;
+            word-wrap: break-word;
+        }
+
+        .flag-card-post a {
+            color: #2c5282;
+            text-decoration: none;
+        }
+
+        .flag-card-post a:hover {
+            text-decoration: underline;
+        }
+
+        .flag-card-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 13px;
+            color: #666;
+            margin-top: 4px;
+            align-items: center;
+        }
+
+        .flag-type {
+            font-weight: bold;
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .flag-type-spam { background: #ffd700; color: #333; }
+        .flag-type-unmarked_nsfw { background: #ff6b6b; color: white; }
+        .flag-type-harassment { background: #ff4444; color: white; }
+        .flag-type-hatespeech { background: #8b0000; color: white; }
+        .flag-type-illegal { background: #2c2c2c; color: white; }
+
+        .flag-notes {
+            font-size: 13px;
+            color: #555;
+            background: rgba(0, 0, 0, 0.04);
+            padding: 6px 12px;
+            border-radius: 6px;
+            margin-top: 4px;
+            border-left: 3px solid #8FDADB;
+            max-width: 100%;
+            word-wrap: break-word;
+        }
+
+        .flag-notes .label {
+            font-weight: bold;
+            color: #888;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .flag-card-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .flag-card-submitter {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .flag-card-submitter a {
+            color: #2c5282;
+            text-decoration: none;
+        }
+
+        .flag-card-submitter a:hover {
+            text-decoration: underline;
+        }
+
+        .violation-count-badge {
+            font-size: 13px;
+            background: rgba(255, 68, 68, 0.1);
+            padding: 2px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 68, 68, 0.2);
+        }
+
+        .violation-count-badge .count {
+            font-weight: bold;
+            color: #cc3a3a;
+        }
+
+        .flag-card-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 2px solid rgba(0, 0, 0, 0.06);
+            align-items: center;
+        }
+
+        .flag-card-actions select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 2px solid #cccfe0;
+            background: white;
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .flag-card-actions select:focus {
+            outline: none;
+            border-color: #8FDADB;
+        }
+
+        .flag-card-actions textarea {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 2px solid #cccfe0;
+            background: white;
+            font-size: 13px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 40px;
+            width: 200px;
+            max-width: 100%;
+        }
+
+        .flag-card-actions textarea:focus {
+            outline: none;
+            border-color: #8FDADB;
+        }
+
+        .action-btn {
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: 2px solid #3a8e8f;
+            background: linear-gradient(180deg, #8FDADB, #4a9e9f);
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(180deg, #9feaeb, #5aaeaf);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .action-btn.danger {
+            border-color: #cc3a3a;
+            background: linear-gradient(180deg, #ff6b6b, #cc3a3a);
+        }
+
+        .action-btn.danger:hover {
+            background: linear-gradient(180deg, #ff7b7b, #dc4a4a);
+        }
+
+        .action-btn.secondary {
+            border-color: #cccfe0;
+            background: linear-gradient(180deg, #e8f0f8, #c8d8e8);
+            color: #1a1a2e;
+        }
+
+        .action-btn.secondary:hover {
+            background: linear-gradient(180deg, #f0f8ff, #d8e8f8);
+        }
+
+        .announcement-admin {
+            margin-bottom: 24px;
+            padding: 20px 25px;
+            border: 4px outset #cccfe0;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 5px 10px 10px -5px rgba(0, 10, 90, 0.2);
+        }
+
+        .announcement-admin-header,
+        .announcement-form-actions,
+        .announcement-history-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .announcement-admin h2,
+        .announcement-admin p {
+            margin: 0;
+        }
+
+        .announcement-admin p {
+            margin-top: 4px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .announcement-form {
+            display: grid;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .announcement-form textarea {
+            min-height: 90px;
+            padding: 10px;
+            border: 2px solid #cccfe0;
+            border-radius: 8px;
+            resize: vertical;
+            font: inherit;
+        }
+
+        .announcement-history {
+            display: grid;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .announcement-history-card {
+            align-items: flex-start;
+            padding: 12px;
+            border: 2px solid #dce4ec;
+            border-radius: 10px;
+            background: #f8fcfd;
+        }
+
+        .announcement-history-card.inactive {
+            opacity: 0.68;
+        }
+
+        .announcement-history-text {
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+        }
+
+        .announcement-history-meta {
+            margin-top: 5px;
+            color: #666;
+            font-size: 11px;
+        }
+
+        .mod-empty {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 60px 20px;
+            text-align: center;
+            border: 4px solid #cccfe0;
+            border-style: outset;
+        }
+
+        .mod-empty h2 {
+            color: #1a1a2e;
+            margin-bottom: 10px;
+        }
+
+        .mod-empty p {
+            color: #666;
+        }
+
+        .mod-loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .mod-loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #8FDADB;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 105px;
+            }
+
+            .mod-container {
+                width: 100%;
+                padding: 8px;
+            }
+
+            .mod-header,
+            .announcement-admin,
+            .flag-card {
+                padding: 14px;
+                border-width: 2px;
+                border-radius: 12px;
+            }
+
+            .mod-header {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+
+            .mod-header h1 {
+                font-size: 21px;
+                overflow-wrap: anywhere;
+            }
+
+            .mod-stats {
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .mod-stat {
+                flex: 1 1 auto;
+                padding: 8px;
+            }
+
+            .announcement-admin-header,
+            .announcement-form-actions,
+            .announcement-history-card,
+            .flag-card-header {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .announcement-admin-header .action-btn,
+            .announcement-form-actions .action-btn {
+                width: 100%;
+            }
+
+            .flag-card-right {
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .flag-card-meta {
+                gap: 6px;
+            }
+
+            .flag-card-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .flag-card-actions textarea,
+            .flag-card-actions select,
+            .flag-card-actions .action-btn {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .mod-container {
+                padding: 4px;
+            }
+
+            .mod-header,
+            .announcement-admin,
+            .flag-card {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+
+            .flag-card-post,
+            .flag-notes,
+            .announcement-history-text {
+                overflow-wrap: anywhere;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay">
+        <div class="loading-content">
+            <img src="/ui/overlays/loading_face.webm" style="width:300px; height:auto;">
+        </div>
+    </div>
+
+    <div class="mod-container">
+        <div class="mod-header">
+            <div>
+                <h1>🛡️ Панель модерации</h1>
+                <div style="font-size:14px; color:#666; margin-top:4px;">Жалобы на посты</div>
+            </div>
+            <div class="mod-stats">
+                <div class="mod-stat"><strong id="pending-count">0</strong> ожидают</div>
+            </div>
+        </div>
+
+        <section class="announcement-admin" id="announcement-admin" hidden>
+            <div class="announcement-admin-header">
+                <div>
+                    <h2>Глобальные уведомления</h2>
+                    <p>Сообщение появится поверх экранов пользователей и сохранится в истории.</p>
+                </div>
+                <button type="button" class="action-btn secondary" id="announcement-refresh">Обновить историю</button>
+            </div>
+            <form id="announcement-form" class="announcement-form">
+                <label for="announcement-text">Текст уведомления</label>
+                <textarea id="announcement-text" maxlength="1000" required placeholder="Введите текст глобального уведомления"></textarea>
+                <div class="announcement-form-actions">
+                    <button type="submit" class="action-btn">Опубликовать</button>
+                    <span id="announcement-form-status" role="status"></span>
+                </div>
+            </form>
+            <div id="announcement-history" class="announcement-history"></div>
+        </section>
+
+        <div id="mod-content">
+            <div class="mod-loading">
+                <div class="spinner"></div>
+                <p>Загрузка жалоб...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/scripts/cookie-auth.js"></script>
+    <script src="/scripts/config.js"></script>
+    <script src="/scripts/auth.js"></script>
+    <script src="/scripts/modspace.js"></script>
+</body>
+</html>

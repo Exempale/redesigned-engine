@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="fortport.ico">
+    <title>ФортПорт - Переписки</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#c7eaf5">
+    <link rel="stylesheet" href="/style.css">
+    <script src="/scripts/cookie-auth.js"></script>
+    <script type="module" src="/scripts/crypto-utils.js"></script>
+    <script src="/scripts/config.js"></script>
+    <script src="/scripts/auth.js"></script>
+    <script src="/scripts/client.js" type="module"></script>
+    <script src="/scripts/friends.js"></script>
+</head>
+<body class="chats-page" style="overflow:hidden">
+
+<div class="chats-page-shell">
+	<div class="feedmain chats-sidebar">
+    	<div class="chats-layout" >
+            <div class="chats-list-panel">
+                <div class="chats-page-heading">
+		<img src="/ui/icons/chats_aero.webp" alt="">
+                <h2>Переписки</h2>
+                </div>
+              <div class="chats-scrollable" id="chats-list-container">
+			<div class="setting-container" style="width:auto;" id="favoutie-chats-container" >
+                  		<div id="favoutie-chats-list"></div>
+			</div>
+                  <div id="chats-list"></div>
+              </div>
+            </div>
+        </div>
+</div>
+
+<div class="feedmain chat-feedmain" id="chat-feedmain">
+        <!-- RIGHT PANEL: active chat -->
+        <div class="chat-container-panel" id="active-chat-panel" style="display: none;">
+            <div class="chat-header-info">
+                <button type="button" class="chat-mobile-back" id="chat-mobile-back" aria-label="Вернуться к списку переписок">←</button>
+                <div class="chat-partner-info">
+                    <img id="chat-partner-avatar" class="chat-partner-avatar frutiger-aero-border" src="/default-avatar.jpg">
+                    <div class="chat-partner-text">
+                        <div class="role-identity-line chat-partner-name-line">
+                            <div class="chat-partner-name" id="chat-partner-name">...</div>
+                        </div>
+                        <div class="chat-partner-status" id="chat-partner-status"></div>
+                    </div>
+                </div>
+                <img id="current-user-chat-avatar" class="current-user-avatar frutiger-aero-border" src="/default-avatar.jpg">
+            </div>
+            <div class="chat-messages-container" id="chat-messages-container" >
+                <!-- messages injected -->
+            </div>
+			
+            <!-- edit indicator -->
+            <div id="edit-indicator" style="display: none; padding: 5px 20px; background: #fff3cd;" class="edit-mode-indicator">Редактирование сообщения...</div>
+            <div class="chat-input-area">
+                <div id="file-preview-row" class="file-preview-row" style="display: none;"></div>
+                <textarea id="message-input" class="message-textarea" rows="2" placeholder="Сообщение..."></textarea>
+                <div class="input-actions-row">
+                    <div class="attach-options">
+                        <button class="clip-btn" id="clip-btn">Вложение</button>
+                        <div id="attach-menu" class="attach-menu">
+                            <div class="attach-option" data-type="image">Фото</div>
+                            <div class="attach-option" data-type="video">Видео</div>
+                            <div class="attach-option" data-type="audio">Аудио</div>
+                        </div>
+                    </div>
+                    <button id="send-message-btn" class="send-msg-btn">Отправить!</button>
+                </div>
+            </div>
+	    </div>
+		<div class="chat-stickers-panel">
+		
+		</div>
+		<button onclick = "chatFeedmainClose()" class = "chat-exit-btn">
+	x
+	</button>
+</div>
+</div>
+
+</div>
+
+<script type="module" src="/scripts/chats.js"></script>
+</body>
+</html>

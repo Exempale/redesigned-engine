@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="/fortport.ico">
+    <title>ФортПорт - Настройки</title>
+    <link rel="stylesheet" href="/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#c7eaf5">
+</head>
+<body>
+    <div class="feedmain communities-page-container">
+<div class="feed-tabs">
+ <div style = "display:flex; border-style:solid; border-width: 0 2px 0 2px; border-color: rgb(127, 129, 140); justify-content:center; background: linear-gradient(180deg,rgba(188, 206, 226, 1) 0%, rgba(188, 206, 226, 1) 49%, rgba(237, 239, 244, 1) 50%, rgba(237, 239, 244, 1)100%);">
+  <button class="tab-btn active" onclick="switchSettingsTab(event, 'bio')">Профиль</button>
+  <button class="tab-btn" onclick="switchSettingsTab(event, 'seq')">Безопасность</button>
+  <button class="tab-btn" onclick="switchSettingsTab(event, 'cust')">Кастомизация</button>
+ </div>
+</div>
+        <div style="display: flex; align-items:left;">
+            <h1 style="margin-left: 20px; margin-bottom: 5px; margin-top:15px;">Настройки</h1>
+        </div>
+        <hr style="border: 1px solid #bccee2; margin: 10px 20px; margin-top:0px;">
+
+
+<div class="settings-container" id = "bio">
+    <div class="setting-container" style="flex-direction: column; display: flex; ">
+      <div class="settings-bio-container">
+       <div style="display:flex; flex-direction:column;">
+	<label>Имя пользователя и Статус:</label>
+		<div style="margin-left:20px; margin-top:5px; margin-bottom:5px;">
+			<textarea rows="1" cols="36" class="settings-textarea" id="settings-username" maxlength="36" style="resize:none"></textarea>
+		</div>
+		<div style="margin-left:20px; margin-bottom:20px;">
+			<textarea rows="1" cols="36" class="settings-textarea" id="settings-status" maxlength="36" style="resize:none"></textarea>
+		</div>
+	<div style="flex-direction: column; display: flex;">
+	<label>Описание:</label>
+	<textarea rows="5" class="settings-textarea" id="settings-description" maxlength="300" style="width:80%; resize:none; margin-left:30px; margin-top:5px; margin-bottom:15px;"></textarea>
+    </div>
+	</div>
+		<div style="margin-left:20px; margin-top:5px; margin-bottom:20px; height:200px;">
+			<img src="/default-avatar.jpg" id="settings-preview-pfp" class="frutiger-aero-border settings-profile-picture">
+			<img src="/ui/overlays/overlay-choose-photo.webp" id="settings-pfp" class="frutiger-aero-border settings-profile-picture pfp-choose-new" draggable="false">
+		<input type="file" style="display:none;" id="pfp-file-select" accept="image/*">
+		</div>
+      </div>
+    <div style="margin-top:5px; margin-bottom:-10px;">
+	    <label>Фон профиля:</label>
+			<img src="/bg.webp" id="settings-preview-background" class="settings-background">
+		<input type="file" style="display:none;" id="profile-background-file-select" accept="image/*">
+		</div>
+	</div>
+    <div class="setting-container">
+    <div class="setting-row">
+	<label >Ваша дата рождения:</label>
+	<input type="date" class="settings-textarea" id="settings-birthday"/>
+   </div>
+    <div class="setting-row">
+	<label>Родной город:</label>
+	<textarea rows="1" class="settings-textarea" id="settings-homecountry" maxlength="96" style="resize:none"></textarea>
+    </div>
+    <div class="setting-row">
+	<label>Образование:</label>
+	<textarea rows="1" class="settings-textarea" id="settings-education" maxlength="96" style="resize:none"></textarea>
+    </div>
+    <div class="setting-row">
+	<label>Ваша работа:</label>
+	<textarea rows="1" class="settings-textarea" id="settings-job" maxlength="96" style="resize:none"></textarea>
+    </div>
+ </div>
+    <div class="setting-container" style="flex-direction: column; display: flex;">
+	<label>Хобби (разделите запятыми):</label>
+	<textarea rows="5" class="settings-textarea" id="settings-hobbies" maxlength="500" style="width:80%; resize:none; margin-left:20px; margin-top:5px; margin-bottom:15px;"></textarea>
+	<label>Фандомы (разделите запятыми):</label>
+	<textarea rows="5" class="settings-textarea" id="settings-fandoms" maxlength="500" style="width:80%; resize:none; margin-left:20px; margin-top:5px; margin-bottom:15px;"></textarea>
+    <div class="setting-row">
+	<label>Религия:</label>
+	<textarea rows="1" class="settings-textarea" id="settings-religion" maxlength="96" style="resize:none"></textarea>
+    </div>
+    </div>
+
+<div style="display:flex; justify-content:center;width:100%;margin-top:25px; margin-bottom:50px;">
+<button class="postbutton" style = "width:120px; left:auto; right:auto; position:relative;"  onclick="saveSettingsBio()">Сохранить</button>
+</div>
+
+</div>
+
+<div class="settings-container" id = "seq" style="display:none">
+    <div class="setting-container" style="flex-direction: column; display: flex; padding-top:15px; padding-bottom:15px;">
+       <div class="setting-row seq-row" style="display:flex; flex-direction:row;">
+	<label>Показывать публикации в ленте:</label>
+		<input type="checkbox" class="anonymous-checkbox" id="show-posts-feed" >
+       </div>
+       <div class="setting-row seq-row" style="display:flex; flex-direction:row;">
+	<label>Кто может видеть мои публикации:</label>
+		<select class="creator-community-dropdown" style="margin-left:5px;" id="who-posts">
+  			<option value="0">Кто угодно</option>
+  			<option value="1">Друзья</option>
+  			<option value="2">Никто</option>
+                </select>
+       </div>
+       <div class="setting-row seq-row" style="display:flex; flex-direction:row;">
+	<label>Кто может видеть информацию обо мне:</label>
+		<select class="creator-community-dropdown" style="margin-left:5px;" id="who-info">
+  			<option value="0">Кто угодно</option>
+  			<option value="1">Друзья</option>
+  			<option value="2">Никто</option>
+                </select>
+       </div>
+       <div class="setting-row seq-row" style="display:flex; flex-direction:row;">
+	<label>Кто может видеть моих друзей:</label>
+		<select class="creator-community-dropdown" style="margin-left:5px;" id="who-friends">
+  			<option value="0">Кто угодно</option>
+  			<option value="1">Друзья</option>
+  			<option value="2">Никто</option>
+                </select>
+       </div>
+       <div class="setting-row seq-row" style="display:flex; flex-direction:row;">
+	<label>Кто может видеть мои порты:</label>
+		<select class="creator-community-dropdown" style="margin-left:5px;" id="who-communities">
+  			<option value="0">Кто угодно</option>
+  			<option value="1">Друзья</option>
+  			<option value="2">Никто</option>
+                </select>
+       </div>
+       <div class="setting-row seq-row" style="display:flex; flex-direction:row;">
+	<label>Кто может видеть мою музыку:</label>
+		<select class="creator-community-dropdown" style="margin-left:5px;" id="who-music">
+  			<option value="0">Кто угодно</option>
+  			<option value="1">Друзья</option>
+  			<option value="2">Никто</option>
+                </select>
+       </div>
+       <div class="setting-row seq-row" style="display:flex; flex-direction:row;">
+	<label>Кто может мне писать:</label>
+		<select class="creator-community-dropdown" style="margin-left:5px;" id="who-chat">
+  			<option value="0">Кто угодно</option>
+  			<option value="1">Друзья</option>
+  			<option value="2">Никто</option>
+                </select>
+       </div>
+       <div class="setting-row" style="display:flex; flex-direction:row;">
+	<label>Анонимный профиль:</label>
+		<input type="checkbox" class="anonymous-checkbox" id="anonymus-profile">
+       </div>
+
+
+
+	</div>
+
+    <div style="display:flex; justify-content:center;width:100%;margin-top:25px; margin-bottom:50px;">
+    	<button class="postbutton" style = "width:120px; left:auto; right:auto; position:relative;"  onclick="saveSettingsSeq()">Сохранить</button>
+     </div>
+
+</div>
+
+
+<div class="settings-container" id = "cust" style="display:none">
+    <div class="setting-container" style="flex-direction: column; display: flex; padding-top:15px; padding-bottom:15px;">
+       <div style="margin-top:5px; margin-bottom:-10px;" class="seq-row">
+	    <label>Фон сайта:</label>
+			<img src="/bg.webp" id="site-bg-preview" class="settings-background">
+		<input type="file" style="display:none;" id="site-bg-select" accept="image/*">
+	</div>
+       <div class="setting-row seq-row" style="display:flex; flex-direction:row;">
+	<label>Звук уведомлений:</label>
+		<input type="checkbox" class="anonymous-checkbox" id="notifications-check" checked>
+       </div>
+       <div class="setting-row seq-row" style="display:flex; flex-direction:row;">
+	<label>Звук сообщений:</label>
+		<input type="checkbox" class="anonymous-checkbox" id="chat-check" checked>
+       </div>
+       <div class="setting-row seq-row" style="display:flex; flex-direction:row;">
+	<label>Звук отправки публикации:</label>
+		<input type="checkbox" class="anonymous-checkbox" id="new-post-check" checked>
+       </div>
+       <div class="setting-row seq-row" style="display:flex; flex-direction:row;">
+	<label>Звук при Онлайне друзей:</label>
+		<input type="checkbox" class="anonymous-checkbox" id="online-check" checked>
+       </div>
+       <div class="setting-row" style="display:flex; flex-direction:row;">
+	<label>Звук заявки в друзья:</label>
+		<input type="checkbox" class="anonymous-checkbox" id="friend-request-check" checked>
+       </div>
+	<hr style="border: 1px solid #bccee2; margin: 15px 0; width: 100%;">
+        <div style="margin-left: 10px; margin-bottom: 10px; font-weight: bold; font-size: 18px;">Помощник Жека</div>
+        
+        <div class="setting-row seq-row" style="display:flex; flex-direction:row;">
+            <label>Жека всегда включён:</label>
+            <input type="checkbox" class="anonymous-checkbox" id="mascot-toggle" disabled>
+        </div>
+        
+        <div class="setting-row" style="display:flex; flex-direction:row;">
+            <label>Подсказки о страницах:</label>
+            <input type="checkbox" class="anonymous-checkbox" id="handholding-toggle">
+        </div>
+
+	</div>
+    <div style="display:flex; justify-content:center;width:100%;margin-top:25px; margin-bottom:50px;">
+    	<button class="postbutton" style = "width:120px; left:auto; right:auto; position:relative;"  onclick="saveSettingsCust()">Сохранить</button>
+     </div>
+</div>
+
+
+
+</div>
+    <script src="/scripts/cookie-auth.js"></script>
+    <script type="module" src="/scripts/crypto-utils.js"></script>
+    <script src="/scripts/config.js"></script>
+    <script src="/scripts/auth.js"></script>
+    <script src="/scripts/client.js"></script>
+    <script src="/scripts/friends.js"></script>
+    <script src="/scripts/chat.js"></script>
+    <script src="/scripts/mascot.js"></script>
+</body>
+</html>

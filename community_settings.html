@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="/fortport.ico">
+    <title>ФортПорт - Настройки порта</title>
+    <link rel="stylesheet" href="/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#c7eaf5">
+</head>
+<body>
+    <div class="feedmain communities-page-container">
+        <div class="feed-tabs">
+            <div style="display:flex; border-style:solid; border-width: 0 2px 0 2px; border-color: rgb(127, 129, 140); justify-content:center; background: linear-gradient(180deg,rgba(188, 206, 226, 1) 0%, rgba(188, 206, 226, 1) 49%, rgba(237, 239, 244, 1) 50%, rgba(237, 239, 244, 1)100%);">
+                <button class="tab-btn active" onclick="switchSettingsTab(event, 'general')">Общие</button>
+                <button class="tab-btn" onclick="switchSettingsTab(event, 'members')">Участники</button>
+            </div>
+        </div>
+        
+        <div style="display: flex; align-items:left;">
+            <h1 style="margin-left: 20px; margin-bottom: 5px; margin-top:15px;">Настройки порта</h1>
+        </div>
+        <hr style="border: 1px solid #bccee2; margin: 10px 20px; margin-top:0px;">
+
+        <!-- GENERAL TAB -->
+        <div class="settings-container" id="general">
+            <div class="setting-container" style="flex-direction: column; display: flex;">
+                <div class="settings-bio-container">
+                    <div style="display:flex; flex-direction:column;">
+                        <label>Название порта и Статус:</label>
+                        <div style="margin-left:20px; margin-top:5px; margin-bottom:5px;">
+                            <textarea rows="1" cols="36" class="settings-textarea" id="community-name" maxlength="36" style="resize:none"></textarea>
+                        </div>
+                        <div style="margin-left:20px; margin-bottom:20px;">
+                            <textarea rows="1" cols="36" class="settings-textarea" id="community-status" maxlength="36" style="resize:none"></textarea>
+                        </div>
+                        <div style="flex-direction: column; display: flex;">
+                            <label>Описание:</label>
+                            <textarea rows="5" class="settings-textarea" id="community-description" maxlength="500" style="width:80%; resize:none; margin-left:30px; margin-top:5px; margin-bottom:15px;"></textarea>
+                        </div>
+                        <div style="flex-direction: column; display: flex;">
+                            <label>Правила (одно правило на строку):</label>
+                            <textarea rows="6" class="settings-textarea" id="community-rules" maxlength="2000" style="width:80%; resize:none; margin-left:30px; margin-top:5px; margin-bottom:15px;"></textarea>
+                        </div>
+                    </div>
+                    <div style="margin-left:20px; margin-top:5px; margin-bottom:20px; height:200px;">
+                        <img src="/default-avatar.jpg" id="settings-preview-pfp" class="frutiger-aero-border settings-profile-picture">
+                        <img src="/ui/overlays/overlay-choose-photo.webp" id="community-pfp" class="frutiger-aero-border settings-profile-picture pfp-choose-new" draggable="false">
+                        <input type="file" style="display:none;" id="pfp-file-select" accept="image/*">
+                    </div>
+                </div>
+                
+                <div style="margin-top:5px; margin-bottom:-10px;">
+                    <label>Фон порта:</label>
+                    <img src="/bg.webp" id="settings-preview-background" class="settings-background">
+                    <input type="file" style="display:none;" id="profile-background-file-select" accept="image/*">
+                </div>
+            </div>
+            
+            <div class="setting-container" style="margin-top:20px;">
+                <label>Тип порта:</label>
+                <div style="margin-left:20px; margin-top:10px;">
+                    <div class="type-option" onclick="selectType('page')">
+                        <input type="radio" name="community-type" id="type-page" value="page">
+                        <label for="type-page"><strong>Страница</strong><br><span class="type-description">На страницах публикации могут делать только модераторы и владелец.</span></label>
+                    </div>
+                    <div class="type-option" style="margin-top:15px;" onclick="selectType('community')">
+                        <input type="radio" name="community-type" id="type-community" value="community">
+                        <label for="type-community"><strong>Сообщество</strong><br><span class="type-description">В сообществах публикации могут делать все участники.</span></label>
+                    </div>
+                </div>
+		<label>Удалить порт:</label>
+                    <button id="delete-community-btn" class="postbutton" style="width:120px; font-size:12px; height:30px; padding:0; margin:15px; margin-top:40px">Удалить порт</button>
+            </div>
+           
+            
+            <div style="display:flex; justify-content:center;width:100%;margin-top:25px; margin-bottom:50px; ">
+                <button class="postbutton" style="width:120px;" onclick="saveCommunitySettings()">Сохранить</button>
+            </div>
+        </div>
+
+        <!-- MEMBERS TAB -->
+        <div class="settings-container" id="members" style="display:none;">
+            <div class="setting-container" style="flex-direction: column; display: flex;">
+                <label style="margin-bottom:10px;">Модераторы</label>
+                <div id="moderators-list" class="friends-container" style="margin-bottom:20px;">
+                    <!-- Moderators will appear here -->
+                </div>
+                
+                <label style="margin-bottom:10px;">Подписчики</label>
+                <div id="subscribers-list" class="friends-container">
+                    <!-- Subscribers will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/scripts/cookie-auth.js"></script>
+    <script type="module" src="/scripts/crypto-utils.js"></script>
+    <script src="/scripts/config.js"></script>
+    <script src="/scripts/auth.js"></script>
+    <script src="/scripts/client.js"></script>
+    <script src="/scripts/chat.js"></script>
+    <script src="/scripts/community-settings.js"></script>
+	<script src="/scripts/mascot.js"></script>
+</body>
+</html>

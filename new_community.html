@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="/fortport.ico">
+    <title>ФортПорт - Создать порт</title>
+    <link rel="stylesheet" href="/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#c7eaf5">
+    <script>
+  function isMobile() {
+    return window.innerWidth <= 768 || 
+           /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }
+  
+  if (isMobile()) {
+    window.location.href = "/mobile/new_community";
+  }
+</script>
+</head>
+<body style="background-image: url('reglogin_bg.webp');">
+    <div class="auth-container" >
+        <h1 style="font-size:56px; margin:0;">Новый порт</h1>
+        
+        
+        
+        <div id="error" class="error"></div>
+        <div id="success" class="success"></div>
+        
+        <form class="auth-form" id="register-form">
+            <!-- Profile picture and name row -->
+            <div class="profile-name-row">
+                <!-- Profile picture selector -->
+                <div class="profile-pic-selector" id="profile-pic-selector">
+                    <img src="/camera-icon.webp" alt="Choose picture" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23666\' stroke-width=\'2\'><circle cx=\'12\' cy=\'12\' r=\'10\'/><path d=\'M12 8v8M8 12h8\'/></svg>'">
+                    <span>Выбрать фото</span>
+                </div>
+                <input type="file" id="profile-pic-input" accept="image/*">
+                
+                <!-- Name input -->
+                <div class="name-input-container">
+			<div style="display:flex; align-items: center; gap:20px; margin-bottom: 0px; margin-top:-10px;">
+            <h3 style="text-align:center;">Тип порта:</h3>
+            <div style="text-align:center;">
+                <select id="type" style="background: transparent; border: 2px solid #8FDADB; border-radius: 8px; padding: 4px 8px; font-size: 16px;">
+                    <option value="community">сообщество</option>
+                    <option value="page">страница</option>
+                </select>
+            </div>
+            </div>
+			<div>
+                            <input type="text" id="username" placeholder="Название порта"  required autocomplete="off">
+			    <textarea id="description" placeholder="Описание" style="width:75%; margin-top:10px;"></textarea>
+                	</div>
+                 </div>
+            </div>
+            
+            <!-- Rules textarea -->
+            <textarea id="rules" rows="4" placeholder="Правила порта:
+
+1. Не говорить о существовании порта."></textarea>
+            
+            <button type="submit">Создать порт</button>
+        </form>
+    </div>
+    
+    <script>
+        // Profile picture selector functionality
+        document.getElementById('profile-pic-selector').addEventListener('click', function() {
+            document.getElementById('profile-pic-input').click();
+        });
+        
+        document.getElementById('profile-pic-input').addEventListener('change', function(e) {
+            if (e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const selector = document.getElementById('profile-pic-selector');
+                    // Replace the content with the selected image
+                    selector.innerHTML = `<img src="${event.target.result}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
+                }
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+    </script>
+    
+    <script src="/scripts/new_community.js"></script>
+    <script src="/scripts/mascot.js"></script>
+</body>
+</html>

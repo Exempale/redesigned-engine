@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="icon" type="image/x-icon" href="/fortport.ico">
+    <meta charset="UTF-8">
+    <title>ФортПорт - Регистрация закрыта</title>
+    <link rel="stylesheet" href="/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#c7eaf5">
+<style>
+        body {
+            background-image: url('/reglogin_bg.webp');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 24px;
+            min-height: 100vh;
+            font-family: "Segoe UI", system-ui, Tahoma, Arial, sans-serif;
+            box-sizing: border-box;
+        }
+
+        .auth-container {
+            width: min(460px, 100%);
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(14px) saturate(1.2);
+            -webkit-backdrop-filter: blur(14px) saturate(1.2);
+            padding: 36px 34px 30px;
+            border-radius: 18px;
+            box-shadow: 0 24px 60px -18px rgba(0, 10, 90, 0.5),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.85);
+            text-align: center;
+            animation: fp-fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+            box-sizing: border-box;
+        }
+
+        .auth-logo {
+            display: block;
+            margin: 0 auto 8px;
+            max-width: 220px;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 4px 10px rgba(0, 10, 90, 0.25));
+        }
+
+        .auth-container h1 {
+            margin: 0 0 18px;
+            color: #15141c;
+            font-size: 24px;
+        }
+
+        .auth-container p {
+            font-size: 15px;
+            line-height: 1.55;
+            color: #333;
+            margin: 0 0 14px;
+        }
+
+        .auth-container p a {
+            color: #14458f;
+            font-weight: 600;
+        }
+
+        .auth-link {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 15px;
+        }
+
+        .auth-link a {
+            color: #14458f;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .auth-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .auth-container { animation: none; }
+        }
+</style>
+</head>
+<body>
+    <div class="auth-container">
+        <img class="auth-logo" src="/ui/logos/main-page-logo.webp" alt="ФортПорт">
+        <h1>Регистрация приостановлена</h1>
+
+        <p>В связи с быстрым наплывом невероятного количества людей, новые пользователи временно не принимаются.</p>
+
+        <p>Мы работаем над ФортПортом, и обещаем что регистрация для новых пользователей вернётся, как только сайт будет обновлён!</p>
+
+        <p>Следить за новостями сайта можно в <a href="https://t.me/THEKARADICAL" target="_blank" rel="noopener">t.me/THEKARADICAL</a>, а поддержать проект можно переводом на сбер <strong>+79183155795 =3</strong></p>
+
+        <div class="auth-link">
+            <a href="/login">Войти в существующий аккаунт</a>
+        </div>
+    </div>
+</body>
+</html>

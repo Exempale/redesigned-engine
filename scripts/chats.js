@@ -1,5 +1,46 @@
 import { decryptMessage, encryptMessage } from '/scripts/crypto-utils.js';
 
+// ---------- Тосты вместо alert() ----------
+function showToast(message, type = 'success') {
+    const stack = document.getElementById('fp-toast-stack');
+    if (!stack) { window.alert(message); return; }
+    const toast = document.createElement('div');
+    toast.className = `fp-toast fp-toast-${type}`;
+    toast.textContent = message;
+    stack.appendChild(toast);
+    setTimeout(() => {
+        toast.classList.add('fp-toast-leaving');
+        toast.addEventListener('animationend', () => toast.remove(), { once: true });
+    }, 3000);
+}
+
+// ---------- Модалка подтверждения вместо confirm() ----------
+function confirmDialog({ title = 'Подтвердите действие', text = '', confirmLabel = 'Да', cancelLabel = 'Отмена' }) {
+    return new Promise(resolve => {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3></h3>
+                <p></p>
+                <div class="modal-buttons">
+                    <button class="cancel-btn"></button>
+                    <button class="save-btn"></button>
+                </div>
+            </div>
+        `;
+        modal.querySelector('h3').textContent = title;
+        modal.querySelector('p').textContent = text;
+        modal.querySelector('.cancel-btn').textContent = cancelLabel;
+        modal.querySelector('.save-btn').textContent = confirmLabel;
+        const close = (result) => { modal.remove(); resolve(result); };
+        modal.querySelector('.cancel-btn').addEventListener('click', () => close(false));
+        modal.querySelector('.save-btn').addEventListener('click', () => close(true));
+        modal.addEventListener('click', (e) => { if (e.target === modal) close(false); });
+        document.body.appendChild(modal);
+    });
+}
+
 function isEncrypted(message) {
     if (!message) return false;
     try {
@@ -110,6 +151,40 @@ document.addEventListener('paste', async (e) => {
     const attachMenu = document.getElementById('attach-menu');
     const filePreviewRow = document.getElementById('file-preview-row');
     const chatMobileBack = document.getElementById('chat-mobile-back');
+    const scrollToBottomBtn = document.getElementById('scroll-to-bottom-btn');
+    const scrollToBottomBadge = document.getElementById('scroll-to-bottom-badge');
+    let unseenWhileScrolledUp = 0;
+
+function isNearBottom(threshold = 120) {
+    if (!messagesContainer) return true;
+    return messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight < threshold;
+}
+
+function hideScrollToBottomButton() {
+    unseenWhileScrolledUp = 0;
+    if (!scrollToBottomBtn) return;
+    scrollToBottomBtn.style.display = 'none';
+    if (scrollToBottomBadge) scrollToBottomBadge.style.display = 'none';
+}
+
+function showScrollToBottomButton(bump = 0) {
+    if (!scrollToBottomBtn) return;
+    if (bump > 0) unseenWhileScrolledUp += bump;
+    scrollToBottomBtn.style.display = 'flex';
+    if (scrollToBottomBadge) {
+        if (unseenWhileScrolledUp > 0) {
+            scrollToBottomBadge.textContent = unseenWhileScrolledUp > 9 ? '9+' : String(unseenWhileScrolledUp);
+            scrollToBottomBadge.style.display = 'flex';
+        } else {
+            scrollToBottomBadge.style.display = 'none';
+        }
+    }
+}
+
+scrollToBottomBtn?.addEventListener('click', () => {
+    scrollToBottom();
+    hideScrollToBottomButton();
+});
 
 function setMobileChatOpen(isOpen) {
     document.body.classList.toggle('mobile-chat-open', Boolean(isOpen));
@@ -212,6 +287,43 @@ msgInput.addEventListener('keydown', function(e) {
             startEditing(lastMyMessage.id);
         }
     }
+});
+
+// Автоматический рост поля ввода под содержимое (до max-height из CSS)
+function autoGrowMessageInput() {
+    msgInput.style.height = 'auto';
+    msgInput.style.height = Math.min(msgInput.scrollHeight, 140) + 'px';
+}
+msgInput.addEventListener('input', autoGrowMessageInput);
+
+// Escape: закрыть меню вложений, либо отменить редактирование/ответ
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (attachMenu.classList.contains('show')) {
+        attachMenu.classList.remove('show');
+        return;
+    }
+    if (editingMessageId) {
+        editingMessageId = null;
+        msgInput.value = '';
+        autoGrowMessageInput();
+        sendBtn.innerText = 'Отправить!';
+        document.getElementById('edit-indicator').style.display = 'none';
+        return;
+    }
+    if (replyToMessageId) {
+        replyToMessageId = null;
+        const replyIndicator = document.getElementById('reply-indicator-floating');
+        if (replyIndicator) replyIndicator.remove();
+    }
+});
+
+// Закрыть меню вложений по клику вне его
+document.addEventListener('click', (e) => {
+    if (!attachMenu.classList.contains('show')) return;
+    if (e.target === clipBtn || clipBtn.contains(e.target)) return;
+    if (attachMenu.contains(e.target)) return;
+    attachMenu.classList.remove('show');
 });
 
 // Auto-focus the message input when user starts typing anywhere on the page
@@ -390,6 +502,9 @@ function handleScroll() {
     // Load more when within 100px of the top
     if (messagesContainer.scrollTop < 200 && currentChatId) {
         loadMessages(currentChatId, true);
+    }
+    if (isNearBottom()) {
+        hideScrollToBottomButton();
     }
 }
     
@@ -588,6 +703,7 @@ async function openChat(chatId, username, avatar, otherUserId, status, options =
         }
     }
 
+    hideScrollToBottomButton();
     await loadMessages(chatId);
     waitForMessages(chatId);
     setupScrollListener();
@@ -830,6 +946,17 @@ function showMessageContextMenu(msgId, isMine, mouseX, mouseY) {
     void menu.offsetHeight;
     menu.classList.add('show');
 
+    // Не даём меню вылезти за пределы экрана (важно на мобильных: contextmenu
+    // срабатывает по долгому тапу и может оказаться у самого края)
+    const rect = menu.getBoundingClientRect();
+    const margin = 8;
+    if (rect.right > window.innerWidth - margin) {
+        menu.style.left = Math.max(margin, window.innerWidth - rect.width - margin) + 'px';
+    }
+    if (rect.bottom > window.innerHeight - margin) {
+        menu.style.top = Math.max(margin, window.innerHeight - rect.height - margin) + 'px';
+    }
+
     setTimeout(() => {
         document.addEventListener('click', function hideMenu(e) {
             if (!menu.contains(e.target)) {
@@ -841,8 +968,22 @@ function showMessageContextMenu(msgId, isMine, mouseX, mouseY) {
 }
     
 async function deleteMessage(msgId) {
-        await fetch('/api/chats/messages/message', { method: 'DELETE', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ messageId: msgId }), credentials:'same-origin' });
-        await loadMessages(currentChatId);
+        const confirmed = await confirmDialog({
+            title: 'Удалить сообщение?',
+            text: 'Это действие нельзя отменить.',
+            confirmLabel: 'Удалить',
+            cancelLabel: 'Отмена'
+        });
+        if (!confirmed) return;
+
+        try {
+            const res = await fetch('/api/chats/messages/message', { method: 'DELETE', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ messageId: msgId }), credentials:'same-origin' });
+            if (!res.ok) throw new Error('bad status');
+            await loadMessages(currentChatId);
+        } catch (err) {
+            console.error('Error deleting message:', err);
+            showToast('Не удалось удалить сообщение', 'error');
+        }
     }
     
 function startEditing(msgId) {
@@ -850,6 +991,8 @@ function startEditing(msgId) {
         if (msg) {
             editingMessageId = msgId;
             msgInput.value = msg.decryptedText || '';
+            autoGrowMessageInput();
+            msgInput.focus();
             document.getElementById('edit-indicator').style.display = 'block';
             sendBtn.innerText = 'Сохранить';
             replyToMessageId = null;
@@ -897,37 +1040,53 @@ function setReplyTo(msgId) {
     msgInput.parentNode.insertBefore(indicator, msgInput);
 }
     
+let isSendingMessage = false;
+
 async function sendMessage() {
+    if (isSendingMessage) return; // защита от повторной отправки по дабл-клику/Enter
     const text = msgInput.value.trim();
     if (!text && pendingFiles.length === 0) return;
-    const formData = new FormData();
-    if (text) {
-        const { encryptMessage } = await import('./crypto-utils.js');
-        const encryptedText = await encryptMessage(currentChatId, text);
-        formData.append('messageText', encryptedText);
-    }
-    if (replyToMessageId) formData.append('referenceId', replyToMessageId);
-    for (let file of pendingFiles) {
-        formData.append('files', file);
-    }
-    let url = `/api/chats/messages/${currentChatId}`;
-    let method = 'POST';
-    if (editingMessageId) {
-        await fetch('/api/chats/messages/message', { method: 'PUT', body: JSON.stringify({ messageId: editingMessageId, newText: text, deleteFiles: [] }), headers:{'Content-Type':'application/json'}, credentials:'same-origin' });
-        editingMessageId = null;
+
+    isSendingMessage = true;
+    sendBtn.disabled = true;
+    sendBtn.classList.add('is-sending');
+
+    try {
+        const formData = new FormData();
+        if (text) {
+            const { encryptMessage } = await import('./crypto-utils.js');
+            const encryptedText = await encryptMessage(currentChatId, text);
+            formData.append('messageText', encryptedText);
+        }
+        if (replyToMessageId) formData.append('referenceId', replyToMessageId);
+        for (let file of pendingFiles) {
+            formData.append('files', file);
+        }
+        let url = `/api/chats/messages/${currentChatId}`;
+        let method = 'POST';
+        if (editingMessageId) {
+            await fetch('/api/chats/messages/message', { method: 'PUT', body: JSON.stringify({ messageId: editingMessageId, newText: text, deleteFiles: [] }), headers:{'Content-Type':'application/json'}, credentials:'same-origin' });
+            editingMessageId = null;
+            document.getElementById('edit-indicator').style.display = 'none';
+        } else {
+            await fetch(url, { method, body: formData, credentials: 'same-origin' });
+        }
+        msgInput.value = '';
+        autoGrowMessageInput();
+        pendingFiles = [];
+        replyToMessageId = null;
+        updateFilePreview();
+        await loadMessages(currentChatId);
+        scrollToBottom();
+
+        // Update the chat preview or create the card if it doesn't exist
+        updateChatCardPreview(currentChatId, text);
+    } finally {
+        isSendingMessage = false;
+        sendBtn.disabled = false;
+        sendBtn.classList.remove('is-sending');
         sendBtn.innerText = 'Отправить!';
-        document.getElementById('edit-indicator').style.display = 'none';
-    } else {
-        await fetch(url, { method, body: formData, credentials: 'same-origin' });
     }
-    msgInput.value = '';
-    pendingFiles = [];
-    replyToMessageId = null;
-    updateFilePreview();
-    await loadMessages(currentChatId);
-    
-    // Update the chat preview or create the card if it doesn't exist
-    updateChatCardPreview(currentChatId, text);
 }
 
 function updateChatCardPreview(chatId, messageText) {
@@ -1126,7 +1285,11 @@ async function waitForMessages(chatId) {
             if (data.type === 'new_message') {
                 // Decrypt the message
                 const decryptedMsg = await decryptMessageIfNeeded(data.message, chatId);
-                
+
+                // Запоминаем, был ли пользователь у низа ленты ДО перерисовки,
+                // чтобы не выдёргивать его вниз, если он читает историю сообщений
+                const wasNearBottom = isNearBottom();
+                const isOwnMessage = decryptedMsg.userId == currentUserId;
 
                 allMessages.push(decryptedMsg);
                 renderMessages();
@@ -1136,13 +1299,20 @@ async function waitForMessages(chatId) {
         wrappers.forEach(wrapper => {
                 wrapper.classList.remove('unread');
         });
-                
+
+                if (wasNearBottom || isOwnMessage) {
+                    scrollToBottom();
+                    hideScrollToBottomButton();
+                } else {
+                    showScrollToBottomButton(1);
+                }
+
                 // ONLY mark as read if window is focused
                 if (document.hasFocus()) {
                     await fetch(`/api/users/chats/read/${chatId}`, {method: 'POST', credentials: 'same-origin' });
-                    scrollToBottom();
                 }
             }
+
 
 		if (data.type === 'read_all') {
 		    const wrappers = messagesContainer.querySelectorAll('.message-wrapper.mine.unread');
